@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"pismo-challenge-go/models"
 )
 
 func ParseBody(bodyReader io.ReadCloser) map[string]string {
@@ -20,15 +21,9 @@ func ParseBody(bodyReader io.ReadCloser) map[string]string {
 	return keyVal
 }
 
-type Transaction struct {
-	AccountId       int     `json:"account_id"`
-	OperationTypeId int     `json:"operation_type_id"`
-	Amount          float64 `json:"amount"`
-}
-
-func ParseTransaction(bodyReader io.ReadCloser) Transaction {
+func ParseTransaction(bodyReader io.ReadCloser) models.Transaction {
 	decoder := json.NewDecoder(bodyReader)
-	var t Transaction
+	var t models.Transaction
 	err := decoder.Decode(&t)
 	if err != nil {
 		panic(err)

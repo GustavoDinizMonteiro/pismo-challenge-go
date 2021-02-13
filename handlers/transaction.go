@@ -6,6 +6,7 @@ import (
 	"math"
 	"net/http"
 	"pismo-challenge-go/db"
+	"pismo-challenge-go/models"
 	"pismo-challenge-go/util"
 	"time"
 )
@@ -74,7 +75,7 @@ func updateAccount(accountId int, amount float64) {
 	}
 }
 
-func saveTransaction(transaction util.Transaction, accountId int) {
+func saveTransaction(transaction models.Transaction, accountId int) {
 	conn, error := db.CreateConn()
 	if error != nil {
 		panic(error.Error())
