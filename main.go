@@ -9,6 +9,7 @@ import (
 func main() {
 	server := server.CreateServer()
 
-	server.HandleFunc("/accounts", handlers.CreateAccount)
+	server.HandleFunc("/accounts", handlers.CreateAccount).Methods("GET")
+	server.HandleFunc("/transactions", handlers.CreateTransaction).Methods("POST")
 	http.ListenAndServe(":8080", server)
 }
