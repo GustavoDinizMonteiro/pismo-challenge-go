@@ -11,7 +11,7 @@ import (
 func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	conn, error := db.CreateConn()
 	if error != nil {
-		log.Println("Database connection refused")
+		log.Println("Database connection refused", error)
 		w.Write([]byte("Error"))
 	}
 	defer conn.Close()
@@ -24,7 +24,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	body := util.ParseBody(r.Body)
 	documentNumber := body["document_number"]
 
-	_, error = stmt.Exec(8, documentNumber, 0)
+	_, error = stmt.Exec(9, documentNumber, 0)
 	if error != nil {
 		panic(error.Error())
 	}
