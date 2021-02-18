@@ -6,7 +6,7 @@ import (
 )
 
 func CreateConn() (*sql.DB, error) {
-	connectionUri := "root:opa123@tcp(127.0.0.1:3306)/test"
+	connectionUri := "root:opa123@tcp(127.0.0.1:3306)/test2"
 	db, e := sql.Open("mysql", connectionUri)
 	if e != nil{
 		return nil, e

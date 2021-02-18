@@ -82,7 +82,7 @@ func saveTransaction(transaction models.Transaction, accountId int) {
 	}
 	defer conn.Close()
 
-	stmt, error := conn.Prepare("INSERT INTO tb_transaction (id, amount, account_id, operation_type_id, event_date) VALUES(?, ?, ?, ?, ?)")
+	stmt, error := conn.Prepare("INSERT INTO tb_transaction (amount, account_id, operation_type_id, event_date) VALUES(?, ?, ?, ?)")
 	if error != nil {
 		panic(error.Error())
 	}
@@ -91,7 +91,7 @@ func saveTransaction(transaction models.Transaction, accountId int) {
 	operationId := transaction.OperationTypeId
 	eventDate := time.Now()
 
-	_, error = stmt.Exec(33, amount, accountId, operationId, eventDate)
+	_, error = stmt.Exec(amount, accountId, operationId, eventDate)
 	if error != nil {
 		panic(error.Error())
 	}

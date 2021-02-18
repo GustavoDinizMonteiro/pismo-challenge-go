@@ -16,7 +16,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	stmt, error := conn.Prepare("INSERT INTO tb_account (id, document_number, credit_limit) VALUES(?, ?, ?)")
+	stmt, error := conn.Prepare("INSERT INTO tb_account (document_number) VALUES(?)")
 	if error != nil {
 		panic(error.Error())
 	}
@@ -24,7 +24,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	body := util.ParseBody(r.Body)
 	documentNumber := body["document_number"]
 
-	_, error = stmt.Exec(9, documentNumber, 0)
+	_, error = stmt.Exec(documentNumber)
 	if error != nil {
 		panic(error.Error())
 	}
