@@ -34,3 +34,5 @@ insert into tb_transaction (amount, account_id, operation_type_id, event_date)
 values
 (100, 1, 4, NOW());
 
+update tb_account set credit_limit=100 where id=1;
+
