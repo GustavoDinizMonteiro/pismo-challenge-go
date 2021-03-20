@@ -22,9 +22,17 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	accountId := transaction.AccountId
 
 	conn, _ := db.Conn(context.Background())
+
 	defer conn.Close()
 
-	account, err := getAccount(accountId, conn)
+	opt := sql.TxOptions{
+		Isolation: 6,
+		ReadOnly:  false,
+	}
+
+	tx, err := conn.BeginTx(context.Background(), &opt)
+
+	account, err := getAccount(accountId, tx)
 	if err != nil {
 		log.Println("Database connection refused", err)
 		w.Write([]byte("Error"))
@@ -36,12 +44,14 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	account.creditLimit += amount
-	saveTransaction(transaction, accountId, conn)
-	updateAccount(accountId, account.creditLimit, conn)
+	saveTransaction(transaction, accountId, tx)
+	updateAccount(accountId, account.creditLimit, tx)
 	fmt.Fprintf(w, "New post was created")
+
+	tx.Commit()
 }
 
-func getAccount(accountId int, conn *sql.Conn) (Account, error) {
+func getAccount(accountId int, conn *sql.Tx) (Account, error) {
 	result, err := conn.QueryContext(context.Background(),"SELECT id, credit_limit FROM tb_account where id=?", accountId)
 	if err != nil {
 		panic(err.Error())
@@ -57,7 +67,7 @@ func getAccount(accountId int, conn *sql.Conn) (Account, error) {
 	return account, nil
 }
 
-func updateAccount(accountId int, amount float64, conn *sql.Conn) {
+func updateAccount(accountId int, amount float64, conn *sql.Tx) {
 	stmt, error := conn.PrepareContext(context.Background(),"UPDATE tb_account SET credit_limit=? WHERE id=?")
 	if error != nil {
 		panic(error.Error())
@@ -70,7 +80,7 @@ func updateAccount(accountId int, amount float64, conn *sql.Conn) {
 	stmt.Close()
 }
 
-func saveTransaction(transaction models.Transaction, accountId int, conn *sql.Conn) {
+func saveTransaction(transaction models.Transaction, accountId int, conn *sql.Tx) {
 	stmt, error := conn.PrepareContext(context.Background(),"INSERT INTO tb_transaction (amount, account_id, operation_type_id, event_date) VALUES(?, ?, ?, ?)")
 	if error != nil {
 		panic(error.Error())
