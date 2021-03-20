@@ -1,30 +1,17 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
-	"pismo-challenge-go/db"
 	"pismo-challenge-go/util"
 )
 
-func CreateAccount(w http.ResponseWriter, r *http.Request) {
-	conn, error := db.CreateConn()
-	if error != nil {
-		log.Println("Database connection refused", error)
-		w.Write([]byte("Error"))
-	}
-	defer conn.Close()
-
-	stmt, error := conn.Prepare("INSERT INTO tb_account (document_number) VALUES(?)")
-	if error != nil {
-		panic(error.Error())
-	}
-
+func CreateAccount(w http.ResponseWriter, r *http.Request, conn *sql.DB) {
 	body := util.ParseBody(r.Body)
 	documentNumber := body["document_number"]
 
-	_, error = stmt.Exec(documentNumber)
+	_, error := conn.Exec("INSERT INTO tb_account (document_number) VALUES(?)", documentNumber)
 	if error != nil {
 		panic(error.Error())
 	}
