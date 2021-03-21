@@ -23,8 +23,8 @@ func main() {
 		panic(e.Error())
 	}
 
-	db.SetMaxOpenConns(100)
-	db.SetConnMaxLifetime(time.Second)
+	db.SetMaxOpenConns(1)
+	db.SetConnMaxLifetime(time.Hour)
 
 	server.HandleFunc("/accounts", func(writer http.ResponseWriter, request *http.Request) {
 		handlers.CreateAccount(writer, request, db)
