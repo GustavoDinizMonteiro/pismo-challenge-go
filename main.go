@@ -16,10 +16,10 @@ func main() {
 
 	connectionUri := "root:opa123@tcp(127.0.0.1:3306)/test2"
 	db, e := sql.Open("mysql", connectionUri)
-	if e != nil{
+	if e != nil {
 		panic(e.Error())
 	}
-	if e = db.Ping(); e != nil{
+	if e = db.Ping(); e != nil {
 		panic(e.Error())
 	}
 
