@@ -28,18 +28,14 @@ resource "aws_lb_listener" "monolitic_listiner" {
 }
 
 resource "aws_lb_target_group" "monolitic_target_group" {
+  vpc_id = "vpc-219d3b5c"
+
   name     = "monolitic-target-group"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
-}
-
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
 }
 
 resource "aws_internet_gateway" "main_ig" {
-  vpc_id = aws_vpc.main.id
 
   tags = {
     Name = "main"
@@ -47,9 +43,10 @@ resource "aws_internet_gateway" "main_ig" {
 }
 
 resource "aws_subnet" "main_a" {
-  vpc_id     = aws_vpc.main.id
+  vpc_id = "vpc-219d3b5c"
+
   availability_zone = "us-east-1a"
-  cidr_block = "10.0.0.0/24"
+  cidr_block = "172.31.96.0/24"
 
   tags = {
     Name = "Main"
@@ -57,9 +54,10 @@ resource "aws_subnet" "main_a" {
 }
 
 resource "aws_subnet" "main_b" {
-  vpc_id     = aws_vpc.main.id
+  vpc_id = "vpc-219d3b5c"
+
   availability_zone = "us-east-1b"
-  cidr_block = "10.0.2.0/24"
+  cidr_block = "172.31.112.0/24"
 
   tags = {
     Name = "Main"
@@ -84,7 +82,6 @@ resource "aws_key_pair" "terraform_user_monolitic" {
 }
 
 resource "aws_security_group" "monolitic_instance_sg" {
-  vpc_id = aws_vpc.main.id
   ingress {
     from_port   = 22
     to_port     = 22
@@ -103,7 +100,6 @@ resource "aws_security_group_rule" "monolitic_instance_sg_rule_http_ingress" {
 }
 
 resource "aws_security_group" "lb_sg" {
-  vpc_id = aws_vpc.main.id
   ingress {
     from_port   = 80
     to_port     = 80
